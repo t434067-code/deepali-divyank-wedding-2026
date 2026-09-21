@@ -3159,6 +3159,145 @@ footer.footer-shell p[data-template-id="footer-credit"] .heart {
 }
 </style>
 
+
+<style id="rsvp-mobile-fix-v20">
+@media (max-width: 560px) {
+  /* Main RSVP card: allow the title to wrap instead of clipping it horizontally. */
+  .rsvp-panel {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .rsvp-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .rsvp-hero-title,
+  .rsvp-hero.sequence-ready .rsvp-hero-title {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    text-align: center !important;
+    font-size: clamp(2rem, 9.5vw, 2.65rem) !important;
+    line-height: 1.08 !important;
+    padding-inline: 2px !important;
+  }
+
+  /* Keep the typewriter effect, but reveal the full wrapped title. */
+  .rsvp-hero.sequence-ready .rsvp-hero-title {
+    clip-path: inset(0 100% 0 0);
+    animation: rsvp-mobile-typewriter-v20 2.8s steps(29, end) .2s forwards !important;
+  }
+
+  .rsvp-hero.sequence-ready .rsvp-hero-title::after {
+    right: 0 !important;
+    height: 70% !important;
+  }
+
+  .rsvp-hero-copy,
+  .rsvp-hero.sequence-ready .rsvp-hero-copy {
+    width: 100% !important;
+    max-width: 360px !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    line-height: 1.55 !important;
+    padding-inline: 4px !important;
+  }
+
+  .rsvp-cta {
+    max-width: 100% !important;
+    width: auto !important;
+    box-sizing: border-box !important;
+    white-space: normal !important;
+    padding: 13px 20px !important;
+  }
+
+  @keyframes rsvp-mobile-typewriter-v20 {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  /* RSVP popup: keep it compact around its actual content on iPhone. */
+  .rsvp-modal {
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    place-items: center !important;
+  }
+
+  .rsvp-modal-card {
+    width: min(100%, 356px) !important;
+    max-height: calc(100dvh - 28px) !important;
+    min-height: 0 !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    padding: 24px 16px 20px !important;
+  }
+
+  .rsvp-modal-title {
+    max-width: 100% !important;
+    width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    font-size: clamp(25px, 8vw, 30px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .rsvp-modal-subtitle {
+    max-width: 100% !important;
+    width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.35 !important;
+  }
+
+  .response-options {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .response-option {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #rsvp-form {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-top: 16px !important;
+  }
+
+  #rsvp-form > div {
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 16px !important;
+  }
+
+  #rsvp-form .field-label,
+  #rsvp-form .form-field,
+  #rsvp-form .gold-button {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  #rsvp-form .form-field {
+    box-sizing: border-box !important;
+  }
+}
+</style>
+
 </head>
  <body data-template-id="__page-root" style="background:#080610;">
   <div id="imperial-curtain" class="imperial-curtain" role="dialog" aria-label="Opening curtain" aria-modal="true" aria-hidden="false">
