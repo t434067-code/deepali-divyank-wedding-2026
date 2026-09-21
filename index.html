@@ -3119,6 +3119,46 @@ footer.footer-shell p[data-template-id="footer-credit"] .heart {
   }
 }
 </style>
+
+<style id="mobile-same-animation-v19-css">
+@media (max-width: 780px) {
+  /* Preserve the exact cinematic reveal transition on mobile. */
+  .cinematic-reveal {
+    opacity: 0;
+    visibility: visible;
+    transform: translate3d(0,40px,0) scale(.985);
+    filter: blur(8px);
+  }
+  .cinematic-reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0,0,0) scale(1);
+    filter: blur(0);
+  }
+
+  .cinematic-left {
+    opacity: 0;
+    transform: translate3d(-50px,0,0);
+    filter: blur(5px);
+  }
+  .cinematic-left.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+
+  .cinematic-right {
+    opacity: 0;
+    transform: translate3d(50px,0,0);
+    filter: blur(5px);
+  }
+  .cinematic-right.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+</style>
+
 </head>
  <body data-template-id="__page-root" style="background:#080610;">
   <div id="imperial-curtain" class="imperial-curtain" role="dialog" aria-label="Opening curtain" aria-modal="true" aria-hidden="false">
@@ -5747,6 +5787,115 @@ body.hero-ready .hero-couple-amp{
 }
 </style>
 <script>/* FINAL SPELLING: Deepali = Dee + pali */</script>
+
+<script id="mobile-same-animation-v19-js">
+(function(){
+  "use strict";
+
+  if (!window.matchMedia || !window.matchMedia("(max-width: 780px)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  function revealMobileSafely(){
+    const selectors = [
+      ".section-label",
+      ".section-title",
+      ".section-rule",
+      ".story-eyebrow",
+      ".story-heading",
+      ".story-panel",
+      ".story-hashtag-wrap",
+      ".event-card",
+      ".gallery-layout",
+      ".gallery-button",
+      ".scratch-card-wrap",
+      ".scratch-instruction",
+      ".rsvp-hero",
+      ".rsvp-panel",
+      ".footer-shell > *",
+      ".section-eyebrow",
+      ".section-divider",
+      ".timeline-header",
+      ".timeline-item-wrapper",
+      ".polaroid-card",
+      ".rsvp-card",
+      ".info-card",
+      ".gift-card",
+      ".footer-content"
+    ];
+
+    const nodes = [...document.querySelectorAll(selectors.join(","))]
+      .filter(n => !n.closest("#imperial-curtain"));
+
+    if (!nodes.length) return;
+
+    nodes.forEach((node, i) => {
+      node.classList.add("cinematic-reveal");
+      node.style.transitionDelay = Math.min((i % 6) * .07, .35) + "s";
+    });
+
+    const reveal = node => {
+      if (!node.classList.contains("is-visible")) {
+        node.classList.add("is-visible");
+      }
+    };
+
+    // Safari-friendly observer: larger rootMargin means elements are prepared
+    // just before entering the viewport, while retaining the same transition.
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            reveal(entry.target);
+            io.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.01,
+        rootMargin: "0px 0px 25% 0px"
+      });
+
+      nodes.forEach(node => io.observe(node));
+
+      // Explicitly handle elements Safari may report incorrectly on first paint.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const h = window.innerHeight || document.documentElement.clientHeight;
+          nodes.forEach(node => {
+            const r = node.getBoundingClientRect();
+            if (r.top < h * 1.25 && r.bottom > -h * .1) reveal(node);
+          });
+        });
+      });
+
+      // Safety net: never leave an element permanently invisible if Safari
+      // misses an IntersectionObserver callback.
+      window.setTimeout(() => {
+        nodes.forEach(node => {
+          const r = node.getBoundingClientRect();
+          if (r.top < (window.innerHeight || 800) * 1.35 && r.bottom > -100) {
+            reveal(node);
+          }
+        });
+      }, 1800);
+    } else {
+      nodes.forEach(reveal);
+    }
+  }
+
+  // Run after the page has painted, without delaying initial content.
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", revealMobileSafely, {once:true});
+  } else {
+    revealMobileSafely();
+  }
+
+  // Re-check after orientation/address-bar changes on iPhone Safari.
+  window.addEventListener("orientationchange", () => {
+    setTimeout(revealMobileSafely, 250);
+  }, {passive:true});
+})();
+</script>
+
 </body></html>
 <style id="hero-source-name-v4">
 /* =========================================================
