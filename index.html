@@ -21,5 +21,201 @@
 </head>
 <body>
 <noscript>This invitation requires JavaScript.</noscript>
+
+<!-- ShaadiOra-style floating music player — V32 MUSICAL NOTE ROTATE -->
+<audio id="wedding-bg-music" preload="metadata" loop playsinline>
+  <source src="https://firebasestorage.googleapis.com/v0/b/shaadiora.firebasestorage.app/o/music_bank%2Fhindi%2FKesariya.mp3?alt=media" type="audio/mpeg">
+</audio>
+
+<button id="wedding-music-btn" class="wedding-music-btn" type="button" aria-label="Play Music" title="Play Music">
+  <svg class="music-note-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="7" cy="18" r="2.8"></circle>
+    <circle cx="16.5" cy="15.5" r="2.8"></circle>
+    <path d="M9.8 17V5.5L19.2 3v12.5"></path>
+  </svg>
+  <span class="music-waves" aria-hidden="true">
+    <i></i><i></i>
+  </span>
+</button>
+
+<style>
+#wedding-music-btn.wedding-music-btn{
+  position:fixed;
+  right:24px;
+  bottom:27px;
+  width:32px;
+  height:32px;
+  z-index:2147483000;
+  border:0;
+  border-radius:50%;
+  outline:0;
+  background:transparent;
+  color:rgba(255,255,255,.94);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  margin:0;
+  cursor:pointer;
+  box-shadow:none;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  appearance:none;
+  transition:background .18s ease,transform .18s ease,box-shadow .18s ease;
+}
+
+/* ShaadiOra-like mouse hover: the otherwise invisible control gets a small dark circle. */
+#wedding-music-btn:hover{
+  background:rgba(28,24,38,.72);
+  box-shadow:0 5px 16px rgba(0,0,0,.20);
+  transform:scale(1.06);
+}
+#wedding-music-btn:active{transform:scale(.92)}
+
+#wedding-music-btn .music-note-icon{
+  width:18px;
+  height:18px;
+  display:block;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  overflow:visible;
+  transform-origin:50% 55%;
+}
+
+/* Paused = clean 🎵 musical-note mark. */
+#wedding-music-btn:not(.playing) .music-note-icon{
+  animation:none;
+}
+
+/* Playing = ShaadiOra-style continuous full rotation. */
+#wedding-music-btn.playing .music-note-icon{
+  animation:musicNoteRotate 2.15s linear infinite;
+}
+
+#wedding-music-btn .music-waves{
+  position:absolute;
+  right:3px;
+  top:5px;
+  width:7px;
+  height:10px;
+  pointer-events:none;
+  opacity:0;
+}
+
+#wedding-music-btn.playing .music-waves{opacity:.9}
+#wedding-music-btn .music-waves i{
+  position:absolute;
+  right:0;
+  display:block;
+  width:3px;
+  height:3px;
+  border-top:1.3px solid currentColor;
+  border-right:1.3px solid currentColor;
+  border-radius:0 4px 0 0;
+  opacity:0;
+}
+#wedding-music-btn .music-waves i:first-child{
+  top:1px;
+  animation:musicWave .95s ease-in-out infinite;
+}
+#wedding-music-btn .music-waves i:last-child{
+  top:5px;
+  right:1px;
+  animation:musicWave .95s .2s ease-in-out infinite;
+}
+
+@keyframes musicNoteRotate{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@keyframes musicWave{
+  0%,100%{opacity:.15;transform:translateX(0) scale(.7)}
+  50%{opacity:1;transform:translateX(1px) scale(1)}
+}
+
+@media(max-width:600px){
+  #wedding-music-btn.wedding-music-btn{
+    right:20px;
+    bottom:calc(23px + env(safe-area-inset-bottom));
+    width:30px;
+    height:30px;
+  }
+  #wedding-music-btn .music-note-icon{width:17px;height:17px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #wedding-music-btn.playing .music-note-icon,
+  #wedding-music-btn.playing .music-waves i{animation:none}
+}
+</style>
+
+<script>
+(function(){
+  const audio=document.getElementById('wedding-bg-music');
+  const btn=document.getElementById('wedding-music-btn');
+  if(!audio || !btn || btn.dataset.musicReady==='1') return;
+  btn.dataset.musicReady='1';
+
+  audio.volume=0.45;
+  let userHasChosen=false;
+
+  function sync(){
+    const playing=!audio.paused && !audio.ended;
+    btn.classList.toggle('playing',playing);
+    btn.setAttribute('aria-label',playing?'Pause Music':'Play Music');
+    btn.setAttribute('title',playing?'Pause Music':'Play Music');
+  }
+
+  async function startMusic(){
+    try{
+      await audio.play();
+      userHasChosen=true;
+      sync();
+      return true;
+    }catch(err){
+      sync();
+      return false;
+    }
+  }
+
+  function stopMusic(){
+    userHasChosen=true;
+    audio.pause();
+    sync();
+  }
+
+  function toggleMusic(e){
+    if(e){e.preventDefault();e.stopPropagation();}
+    if(audio.paused || audio.ended) startMusic();
+    else stopMusic();
+  }
+
+  btn.addEventListener('click',toggleMusic,false);
+  audio.addEventListener('play',sync);
+  audio.addEventListener('playing',sync);
+  audio.addEventListener('pause',sync);
+  audio.addEventListener('ended',sync);
+
+  async function firstGesture(e){
+    if(userHasChosen) return;
+    if(e.target===btn || btn.contains(e.target)) return;
+    const ok=await startMusic();
+    if(ok){
+      document.removeEventListener('pointerup',firstGesture,true);
+      document.removeEventListener('touchend',firstGesture,true);
+      document.removeEventListener('click',firstGesture,true);
+    }
+  }
+
+  document.addEventListener('pointerup',firstGesture,true);
+  document.addEventListener('touchend',firstGesture,true);
+  document.addEventListener('click',firstGesture,true);
+  sync();
+})();
+</script>
+
 </body>
 </html>
